@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: catrion-auth-postgres
+    environment:
+      POSTGRES_DB: catrion_auth
+      POSTGRES_USER: catrion_user
+      POSTGRES_PASSWORD: catrion_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - catrion_auth_data:/var/lib/postgresql/data
+
+volumes:
+  catrion_auth_data:
