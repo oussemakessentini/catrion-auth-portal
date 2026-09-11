@@ -1,8 +1,7 @@
 package com.catrion.auth_portal.service;
 
-import com.catrion.auth_portal.dto.AuthResponse;
-import com.catrion.auth_portal.dto.LoginRequest;
-import com.catrion.auth_portal.dto.RegisterRequest;
+import com.catrion.auth_portal.dto.*;
+import com.catrion.auth_portal.entity.RefreshToken;
 import com.catrion.auth_portal.entity.Role;
 import com.catrion.auth_portal.entity.User;
 import com.catrion.auth_portal.repository.RoleRepository;
@@ -29,6 +28,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -57,8 +57,12 @@ public class AuthService {
         String accessToken =
                 jwtService.generateToken(userDetails);
 
+        String refreshToken =
+                refreshTokenService.createRefreshToken(user).getToken();
+
         return new AuthResponse(
                 accessToken,
+                refreshToken,
                 "Bearer",
                 user.getEmail(),
                 user.getFullName()
@@ -82,12 +86,48 @@ public class AuthService {
 
         String accessToken =
                 jwtService.generateToken(userDetails);
+        String refreshToken =
+                refreshTokenService.createRefreshToken(user).getToken();
 
         return new AuthResponse(
                 accessToken,
+                refreshToken,
                 "Bearer",
                 user.getEmail(),
                 user.getFullName()
         );
+    }
+
+    public TokenRefreshResponse refreshToken(
+            RefreshTokenRequest request
+    ) {
+
+        RefreshToken refreshToken =
+                refreshTokenService.findByToken(request.refreshToken());
+
+        refreshTokenService.verifyExpiration(refreshToken);
+
+        User user = refreshToken.getUser();
+
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(user.getEmail());
+
+        String newAccessToken =
+                jwtService.generateToken(userDetails);
+
+        return new TokenRefreshResponse(
+                newAccessToken,
+                refreshToken.getToken(),
+                "Bearer"
+        );
+    }
+
+    @Transactional
+    public void logout(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow();
+
+        refreshTokenService.deleteByUser(user);
     }
 }

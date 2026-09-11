@@ -1,10 +1,9 @@
 package com.catrion.auth_portal.dto;
 
-public record AuthResponse(
+
+public record TokenRefreshResponse(
         String accessToken,
         String refreshToken,
-        String tokenType,
-        String email,
-        String fullName
+        String tokenType
 ) {
 }

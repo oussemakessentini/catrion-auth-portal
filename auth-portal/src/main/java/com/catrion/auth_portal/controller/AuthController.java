@@ -1,13 +1,12 @@
 package com.catrion.auth_portal.controller;
 
-import com.catrion.auth_portal.dto.AuthResponse;
-import com.catrion.auth_portal.dto.LoginRequest;
-import com.catrion.auth_portal.dto.RegisterRequest;
+import com.catrion.auth_portal.dto.*;
 import com.catrion.auth_portal.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,5 +32,24 @@ public class AuthController {
         return ResponseEntity.ok(
                 authService.login(request)
         );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenRefreshResponse> refresh(
+            @Valid @RequestBody RefreshTokenRequest request
+    ) {
+        return ResponseEntity.ok(
+                authService.refreshToken(request)
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            Authentication authentication
+    ) {
+
+        authService.logout(authentication.getName());
+
+        return ResponseEntity.noContent().build();
     }
 }
