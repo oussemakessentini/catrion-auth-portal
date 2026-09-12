@@ -4,11 +4,15 @@ package com.catrion.auth_portal.config;
 
 import com.catrion.auth_portal.entity.Permission;
 import com.catrion.auth_portal.entity.Role;
+import com.catrion.auth_portal.entity.User;
 import com.catrion.auth_portal.repository.PermissionRepository;
 import com.catrion.auth_portal.repository.RoleRepository;
+import com.catrion.auth_portal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
 
 import java.util.Set;
 
@@ -18,7 +22,8 @@ public class DataInitializer implements CommandLineRunner {
 
     private final RoleRepository roleRepository;
     private final PermissionRepository permissionRepository;
-
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     @Override
     public void run(String... args) {
 
@@ -49,6 +54,28 @@ public class DataInitializer implements CommandLineRunner {
                         userDisable
                 )
         );
+
+        createAdminUser();
+    }
+
+    private void createAdminUser() {
+
+        if (userRepository.existsByEmail("admin@catrion.local")) {
+            return;
+        }
+
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseThrow();
+
+        User admin = User.builder()
+                .fullName("CATRION Administrator")
+                .email("admin@catrion.local")
+                .password(passwordEncoder.encode("Admin123!"))
+                .enabled(true)
+                .roles(Set.of(adminRole))
+                .build();
+
+        userRepository.save(admin);
     }
 
     private Permission createPermission(String name) {
