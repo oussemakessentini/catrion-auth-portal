@@ -323,3 +323,112 @@
 
   border-radius: 8px;
 }
+
+.users-card {
+  margin-top: 28px;
+
+  background: white;
+
+  border: 1px solid #e4ebf0;
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  box-shadow: 0 5px 20px rgba(20, 61, 94, 0.04);
+}
+
+.users-table-wrapper {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.users-table th {
+  text-align: left;
+
+  padding: 16px 20px;
+
+  background: #f7f9fb;
+
+  color: #607485;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  border-bottom: 1px solid #e4ebf0;
+}
+
+.users-table td {
+  padding: 16px 20px;
+
+  border-bottom: 1px solid #edf1f4;
+
+  color: #35566f;
+}
+
+.users-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table-user > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.table-user span {
+  color: #81909d;
+  font-size: 13px;
+}
+
+.table-avatar {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  background: #e0f0fa;
+  color: #176fa8;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: 700;
+}
+
+.actions-column {
+  text-align: right !important;
+}
+
+.disable-button,
+.enable-button {
+  border: none;
+
+  padding: 8px 13px;
+
+  border-radius: 7px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.disable-button {
+  background: #fdeaea;
+  color: #ad3636;
+}
+
+.enable-button {
+  background: #e5f7ed;
+  color: #23834d;
+}
