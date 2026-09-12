@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -13,10 +14,7 @@ function App() {
       <Route
         path="/"
         element={
-          <Navigate
-            to="/login"
-            replace
-          />
+          <Navigate to="/login" replace />
         }
       />
 
@@ -26,12 +24,14 @@ function App() {
       />
 
       <Route
+        path="/dashboard"
+        element={<Dashboard />}
+      />
+
+      <Route
         path="*"
         element={
-          <Navigate
-            to="/login"
-            replace
-          />
+          <Navigate to="/login" replace />
         }
       />
 
