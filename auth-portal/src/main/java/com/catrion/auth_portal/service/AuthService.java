@@ -65,7 +65,11 @@ public class AuthService {
                 refreshToken,
                 "Bearer",
                 user.getEmail(),
-                user.getFullName()
+                user.getFullName(),
+                user.getRoles()
+                        .stream()
+                        .map(Role::getName)
+                        .toList()
         );
     }
 
@@ -94,7 +98,11 @@ public class AuthService {
                 refreshToken,
                 "Bearer",
                 user.getEmail(),
-                user.getFullName()
+                user.getFullName(),
+                user.getRoles()
+                        .stream()
+                        .map(Role::getName)
+                        .toList()
         );
     }
 

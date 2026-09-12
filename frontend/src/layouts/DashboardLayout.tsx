@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import "../styles/dashboard.css";
 
 export default function DashboardLayout() {
-  const { user, logout } = useAuth();
+  const { user, logout, hasRole } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -27,9 +27,11 @@ export default function DashboardLayout() {
             Profile
           </NavLink>
 
-          <NavLink to="/admin/users">
-            Users
-          </NavLink>
+          {hasRole("ROLE_ADMIN") && (
+            <NavLink to="/admin/users">
+                Users
+            </NavLink>
+          )}
         </nav>
 
         <button

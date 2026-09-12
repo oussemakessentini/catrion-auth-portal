@@ -11,7 +11,7 @@ import AdminUsers from "./pages/AdminUsers";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
-
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   return (
@@ -36,10 +36,12 @@ function App() {
             path="/profile"
             element={<Profile />}
           />
-          <Route
-            path="/admin/users"
-            element={<AdminUsers />}
-          />
+          <Route element={<AdminRoute />}>
+            <Route
+              path="/admin/users"
+              element={<AdminUsers />}
+            />
+          </Route>
         </Route>
       </Route>
 

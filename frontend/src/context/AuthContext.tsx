@@ -17,8 +17,11 @@ interface AuthContextType {
     email: string,
     password: string
   ) => Promise<AuthResponse>;
+  hasRole: (role: string) => boolean;
   logout: () => Promise<void>;
 }
+
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -30,7 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ? (JSON.parse(savedUser) as User)
       : null;
   });
-
+  const hasRole = (role: string) => {
+    return user?.roles.includes(role) ?? false;
+    };
   const login = async (
     email: string,
     password: string
@@ -49,8 +54,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("refreshToken", data.refreshToken);
 
     const loggedUser: User = {
-      email: data.email,
-      fullName: data.fullName,
+    email: data.email,
+    fullName: data.fullName,
+    roles: data.roles,
     };
 
     localStorage.setItem("user", JSON.stringify(loggedUser));
@@ -98,6 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         isAuthenticated: !!user,
+        hasRole,
       }}
     >
       {children}
