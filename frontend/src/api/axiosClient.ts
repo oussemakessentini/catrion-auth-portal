@@ -14,6 +14,7 @@ const axiosClient = axios.create({
   },
 });
 
+// Add access token to every API request
 axiosClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
 
@@ -24,16 +25,24 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Handle expired access tokens
 axiosClient.interceptors.response.use(
   (response) => response,
 
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryConfig;
 
+    // Don't attempt token refresh for authentication endpoints
+    const isAuthRequest =
+      originalRequest?.url?.includes("/auth/login") ||
+      originalRequest?.url?.includes("/auth/register") ||
+      originalRequest?.url?.includes("/auth/refresh");
+
     if (
       error.response?.status === 401 &&
       originalRequest &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isAuthRequest
     ) {
       originalRequest._retry = true;
 
@@ -64,7 +73,9 @@ axiosClient.interceptors.response.use(
         originalRequest.headers.Authorization =
           `Bearer ${newAccessToken}`;
 
+        // Retry original failed request
         return axiosClient(originalRequest);
+
       } catch (refreshError) {
         clearSession();
 
