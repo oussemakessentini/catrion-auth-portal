@@ -6,9 +6,11 @@ import {
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
+
 
 function App() {
   return (
@@ -28,6 +30,10 @@ function App() {
           <Route
             path="/dashboard"
             element={<Dashboard />}
+          />
+          <Route
+            path="/profile"
+            element={<Profile />}
           />
         </Route>
       </Route>
