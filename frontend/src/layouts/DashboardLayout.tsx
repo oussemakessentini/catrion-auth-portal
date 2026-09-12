@@ -12,50 +12,101 @@ export default function DashboardLayout() {
   };
 
   return (
-    <div className="dashboard-shell">
+    <div className="dashboard-layout">
       <aside className="sidebar">
-        <div className="sidebar-logo">
-          CATRION
+        <div className="sidebar-brand">
+          <div className="sidebar-logo">CATRION</div>
+
+          <span className="sidebar-subtitle">
+            Access Portal
+          </span>
         </div>
 
         <nav className="sidebar-nav">
-          <NavLink to="/dashboard">
-            Dashboard
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "sidebar-link active"
+                : "sidebar-link"
+            }
+          >
+            <span className="sidebar-link-icon">▦</span>
+            <span>Dashboard</span>
           </NavLink>
 
-          <NavLink to="/profile">
-            Profile
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              isActive
+                ? "sidebar-link active"
+                : "sidebar-link"
+            }
+          >
+            <span className="sidebar-link-icon">●</span>
+            <span>Profile</span>
           </NavLink>
 
           {hasRole("ROLE_ADMIN") && (
-            <NavLink to="/admin/users">
-                Users
+            <NavLink
+              to="/admin/users"
+              className={({ isActive }) =>
+                isActive
+                  ? "sidebar-link active"
+                  : "sidebar-link"
+              }
+            >
+              <span className="sidebar-link-icon">👥</span>
+              <span>Users</span>
             </NavLink>
           )}
         </nav>
 
-        <button
-          className="sidebar-logout"
-          onClick={handleLogout}
-        >
-          Sign out
-        </button>
+        <div className="sidebar-footer">
+          <div className="sidebar-security">
+            <span className="security-dot" />
+
+            <div>
+              <strong>Secure Session</strong>
+              <span>JWT Protected</span>
+            </div>
+          </div>
+
+          <button
+            className="logout-button"
+            onClick={handleLogout}
+          >
+            Sign out
+          </button>
+        </div>
       </aside>
 
       <div className="dashboard-main">
         <header className="topbar">
-          <div>
-            <h2>CATRION Access Portal</h2>
+          <div className="topbar-title">
+            <h1>CATRION Access Portal</h1>
+
+            <p>
+              Secure application access and account
+              management
+            </p>
           </div>
 
           <div className="topbar-user">
             <div className="user-avatar">
-              {user?.fullName?.charAt(0).toUpperCase()}
+              {user?.fullName
+                ?.charAt(0)
+                .toUpperCase() || "U"}
             </div>
 
-            <div>
-              <strong>{user?.fullName}</strong>
-              <span>{user?.email}</span>
+            <div className="topbar-user-info">
+              <strong>
+                {user?.fullName || "CATRION User"}
+              </strong>
+
+              <span>
+                {user?.email || ""}
+              </span>
             </div>
           </div>
         </header>
