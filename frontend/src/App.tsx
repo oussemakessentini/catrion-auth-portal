@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import AdminUsers from "./pages/AdminUsers";
+import Register from "./pages/Register";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -25,7 +26,10 @@ function App() {
         path="/login"
         element={<Login />}
       />
-
+      <Route
+        path="/register"
+        element={<Register />}
+      />
       <Route element={<ProtectedRoute />}>
         <Route element={<DashboardLayout />}>
           <Route
