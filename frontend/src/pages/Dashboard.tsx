@@ -1,23 +1,38 @@
 import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>CATRION Dashboard</h1>
+    <div>
+      <div className="page-header">
+        <div>
+          <h1>Welcome back, {user?.fullName}</h1>
+          <p>
+            Manage your account and access CATRION services.
+          </p>
+        </div>
+      </div>
 
-      <p>
-        Welcome, {user?.fullName}
-      </p>
+      <div className="dashboard-cards">
+        <div className="dashboard-card">
+          <span>Account Status</span>
+          <strong>Active</strong>
+          <p>Your account is currently active.</p>
+        </div>
 
-      <p>
-        {user?.email}
-      </p>
+        <div className="dashboard-card">
+          <span>Security</span>
+          <strong>JWT Protected</strong>
+          <p>Your current session is authenticated.</p>
+        </div>
 
-      <button onClick={logout}>
-        Logout
-      </button>
+        <div className="dashboard-card">
+          <span>Access</span>
+          <strong>Role Based</strong>
+          <p>Portal access is controlled using RBAC.</p>
+        </div>
+      </div>
     </div>
   );
 }

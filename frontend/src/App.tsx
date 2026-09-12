@@ -6,7 +6,9 @@ import {
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+import DashboardLayout from "./layouts/DashboardLayout";
 
 function App() {
   return (
@@ -22,10 +24,12 @@ function App() {
       />
 
       <Route element={<ProtectedRoute />}>
-        <Route
-          path="/dashboard"
-          element={<Dashboard />}
-        />
+        <Route element={<DashboardLayout />}>
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
+        </Route>
       </Route>
 
       <Route
