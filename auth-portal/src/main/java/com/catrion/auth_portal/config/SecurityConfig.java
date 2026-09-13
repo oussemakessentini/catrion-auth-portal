@@ -2,6 +2,7 @@ package com.catrion.auth_portal.config;
 
 import com.catrion.auth_portal.security.CustomUserDetailsService;
 import com.catrion.auth_portal.security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,59 +30,105 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Value("${app.cors.allowed-origin}")
     private String allowedOrigin;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) throws Exception {
 
-        return http
-                .cors(cors -> {})
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+            throws Exception {
+
+        http
+                // REST API + JWT -> CSRF not needed
                 .csrf(csrf -> csrf.disable())
+
+                // CORS
+                .cors(cors ->
+                        cors.configurationSource(corsConfigurationSource())
+                )
+
+                // JWT is stateless
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
                         )
                 )
-                .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers(
-                                        "/api/auth/register",
-                                        "/api/auth/login",
-                                        "/api/auth/refresh"
-                                ).permitAll()
 
-                                .requestMatchers("/api/auth/logout").authenticated()
+                // 401 vs 403 handling
+                .exceptionHandling(exception -> exception
 
-                                .anyRequest().authenticated()
+                        // User is NOT authenticated
+                        .authenticationEntryPoint(
+                                (request, response, authException) ->
+                                        response.sendError(
+                                                HttpServletResponse.SC_UNAUTHORIZED,
+                                                "Unauthorized"
+                                        )
+                        )
+
+                        // User IS authenticated,
+                        // but does not have permission
+                        .accessDeniedHandler(
+                                (request, response, accessDeniedException) ->
+                                        response.sendError(
+                                                HttpServletResponse.SC_FORBIDDEN,
+                                                "Forbidden"
+                                        )
+                        )
                 )
+
+                // Endpoint authorization
+                .authorizeHttpRequests(auth -> auth
+
+                        // Public endpoints
+                        .requestMatchers(
+                                "/api/auth/register",
+                                "/api/auth/login",
+                                "/api/auth/refresh"
+                        ).permitAll()
+
+                        // Logout requires authentication
+                        .requestMatchers(
+                                "/api/auth/logout"
+                        ).authenticated()
+
+                        // Everything else requires authentication
+                        .anyRequest()
+                        .authenticated()
+                )
+
+                // Authentication provider
                 .authenticationProvider(authenticationProvider())
+
+                // JWT filter
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
-                )
-                .build();
+                );
+
+        return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
     @Bean
     public AuthenticationProvider authenticationProvider() {
 
-        DaoAuthenticationProvider provider =
-                new DaoAuthenticationProvider(userDetailsService);
+        DaoAuthenticationProvider authenticationProvider =
+                new DaoAuthenticationProvider(customUserDetailsService);
 
-        provider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
 
-        return provider;
+        return authenticationProvider;
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -90,6 +137,7 @@ public class SecurityConfig {
 
         return configuration.getAuthenticationManager();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

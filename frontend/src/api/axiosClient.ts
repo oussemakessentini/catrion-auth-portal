@@ -8,7 +8,7 @@ interface RetryConfig extends InternalAxiosRequestConfig {
 }
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -56,7 +56,7 @@ axiosClient.interceptors.response.use(
 
       try {
         const response = await axios.post(
-          "http://localhost:8080/api/auth/refresh",
+          "/api/auth/refresh",
           {
             refreshToken,
           }
